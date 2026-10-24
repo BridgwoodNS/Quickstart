@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,9 +19,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
- * LinearOpMode Test File for Buzzy Launcher Tuning.
- * Allows live adjustment of launcher target velocity using Gamepad 1 Dpad Up and Dpad Down.
+ * LinearOpMode Test File for Buzzy Launcher Tuning with FTC Dashboard support.
+ * - View live plots at http://192.168.43.1:8080/dash
+ * - Adjust TARGET_VELOCITY on the fly via FTC Dashboard or Gamepad Dpad Up/Down.
  */
+@Config
 @TeleOp(name = "Buzzy_Launcher_Test", group = "Test")
 public class BuzzyTest extends LinearOpMode {
 
@@ -35,10 +40,10 @@ public class BuzzyTest extends LinearOpMode {
     private VoltageSensor batteryVoltageSensor = null;
     private IMU imu = null;
 
-    // Launcher Tuning & Controls
-    public int launcherTargetVelocity = 1250; // Initial target velocity
-    public final int VELOCITY_STEP = 25;      // Ticks/sec adjustment step
-    public static final double VELOCITY_TOLERANCE_PCT = 0.03;
+    // Launcher Tuning & Controls (Editable live in FTC Dashboard!)
+    public static int TARGET_VELOCITY = 1250; // Initial target velocity (ticks/sec)
+    public static int VELOCITY_STEP = 25;      // Ticks/sec adjustment step
+    public static double VELOCITY_TOLERANCE_PCT = 0.03;
 
     // Edge detection variables for buttons
     private boolean lastDpadUp = false;
@@ -51,6 +56,9 @@ public class BuzzyTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // Initialize FTC Dashboard Telemetry (sends telemetry to both Driver Station and Web Dashboard)
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         // ----------------------------------------------------------------------------------
         // HARDWARE INITIALIZATION
         // ----------------------------------------------------------------------------------
@@ -97,7 +105,7 @@ public class BuzzyTest extends LinearOpMode {
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        telemetry.addData("Status", "Initialized. Use Dpad Up/Down to adjust target velocity.");
+        telemetry.addData("Status", "Initialized. View FTC Dashboard at 192.168.43.1:8080/dash");
         telemetry.update();
 
         waitForStart();
@@ -123,10 +131,10 @@ public class BuzzyTest extends LinearOpMode {
             boolean currentDpadDown = gamepad1.dpad_down;
 
             if (currentDpadUp && !lastDpadUp) {
-                launcherTargetVelocity += VELOCITY_STEP;
+                TARGET_VELOCITY += VELOCITY_STEP;
             }
             if (currentDpadDown && !lastDpadDown) {
-                launcherTargetVelocity = Math.max(0, launcherTargetVelocity - VELOCITY_STEP);
+                TARGET_VELOCITY = Math.max(0, TARGET_VELOCITY - VELOCITY_STEP);
             }
 
             lastDpadUp = currentDpadUp;
@@ -140,24 +148,23 @@ public class BuzzyTest extends LinearOpMode {
             leftIntakeServo.setPower(intakePower);
             rightIntakeServo.setPower(intakePower);
 
-            // Detailed Telemetry for Tuning
-            telemetry.addData("--- LAUNCHER TUNING ---", "");
-            telemetry.addData("Target Velocity", "%d (Dpad Up/Down +/- %d)", launcherTargetVelocity, VELOCITY_STEP);
-            telemetry.addData("Actual Velocity", "%.1f", launcher.getVelocity());
-            telemetry.addData("Velocity Error", "%.1f", launcherTargetVelocity - launcher.getVelocity());
-            telemetry.addData("Ready to Launch", isReadyToLaunch());
+            // Live FTC Dashboard Plotting & Telemetry
+            telemetry.addData("Target Velocity", TARGET_VELOCITY);
+            telemetry.addData("Actual Velocity", launcher.getVelocity());
+            telemetry.addData("Velocity Error", TARGET_VELOCITY - launcher.getVelocity());
+            telemetry.addData("Ready to Launch", isReadyToLaunch() ? 1 : 0);
             if (batteryVoltageSensor != null) {
-                telemetry.addData("Battery Voltage", "%.2f V", batteryVoltageSensor.getVoltage());
+                telemetry.addData("Battery Voltage", batteryVoltageSensor.getVoltage());
             }
-            telemetry.addData("Heading", "%.1f deg", Math.toDegrees(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
+            telemetry.addData("Heading Deg", Math.toDegrees(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             telemetry.update();
         }
     }
 
     private boolean isReadyToLaunch() {
         double currentVel = launcher.getVelocity();
-        double error = Math.abs(launcherTargetVelocity - currentVel);
-        return error <= (launcherTargetVelocity * VELOCITY_TOLERANCE_PCT);
+        double error = Math.abs(TARGET_VELOCITY - currentVel);
+        return error <= (TARGET_VELOCITY * VELOCITY_TOLERANCE_PCT);
     }
 
     private void launch() {
@@ -180,7 +187,7 @@ public class BuzzyTest extends LinearOpMode {
         lastRightBumper = currentRightBumper;
 
         if (currentRightBumper) {
-            launcher.setVelocity(launcherTargetVelocity);
+            launcher.setVelocity(TARGET_VELOCITY);
         } else {
             launcher.setVelocity(0);
         }

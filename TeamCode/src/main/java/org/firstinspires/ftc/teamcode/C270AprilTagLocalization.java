@@ -27,13 +27,39 @@ public class C270AprilTagLocalization extends LinearOpMode {
     // Adjust these values to match where your Logitech C270 is mounted on the robot chassis.
     // ----------------------------------------------------------------------------------
     // Position: (X = Left/Right inches, Y = Forward/Back inches, Z = Up/Down inches from robot center)
+
+    /**
+     * Variables to store the position and orientation of the camera on the robot. Setting these
+     * values requires a definition of the axes of the camera and robot:
+     *
+     * Camera axes:
+     * Origin location: Center of the lens
+     * Axes orientation: +x right, +y down, +z forward (from camera's perspective)
+     *
+     * Robot axes (this is typical, but you can define this however you want):
+     * Origin location: Center of the robot at field height
+     * Axes orientation: +x right, +y forward, +z upward
+     *
+     * Position:
+     * If all values are zero (no translation), that implies the camera is at the center of the
+     * robot. Suppose your camera is positioned 5 inches to the left, 7 inches forward, and 12
+     * inches above the ground - you would need to set the position to (-5, 7, 12).
+     *
+     * Orientation:
+     * If all values are zero (no rotation), that implies the camera is pointing straight up. In
+     * most cases, you'll need to set the pitch to -90 degrees (rotation about the x-axis), meaning
+     * the camera is horizontal. Use a yaw of 0 if the camera is pointing forwards, +90 degrees if
+     * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
+     * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
+     */
+
     private Position cameraPosition = new Position(
             DistanceUnit.INCH, 0.0, 0.0, 6.0, 0
     );
 
     // Orientation: Yaw (0 = facing forward, +90 = facing left), Pitch (-90 = horizontal camera), Roll
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(
-            AngleUnit.DEGREES, 0.0, -90.0, 0.0, 0
+            AngleUnit.DEGREES, 0.0, -70.0, 0.0, 0
     );
 
     private AprilTagProcessor aprilTag;
