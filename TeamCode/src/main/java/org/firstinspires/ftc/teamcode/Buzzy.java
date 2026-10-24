@@ -35,8 +35,13 @@ public class Buzzy extends OpMode {
     // IMU member variable for Field-Oriented Control
     private IMU imu = null;
 
-    public final int LAUNCHER_TARGET_VELOCITY = 1250; //2678 RPM
-    public final int LAUNCHER_MIN_VELOCITY = 1200; //2571 RPM
+
+    //2800 ticks/sec = 6000 rpm
+    // Velocity Conversion Formulas (for 28 ticks/rev motor):
+    // Target Velocity (ticks/sec) = (RPM * TicksPerRev) / 60  ==>  RPM * (28 / 60) == RPM * 0.4667
+    // RPM = (Target Velocity * 60) / TicksPerRev              ==>  Velocity * (60 / 28) == Velocity * 2.1429
+    public final int LAUNCHER_TARGET_VELOCITY = 1250; // 2678 RPM
+    public final int LAUNCHER_MIN_VELOCITY = 1200; // 2571 RPM
     public static final double VELOCITY_TOLERANCE_PCT = 0.03;
 
     double leftFrontPower;
