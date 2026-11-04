@@ -121,7 +121,7 @@ public class BuzzyTest extends LinearOpMode {
             }
 
             // Field-Oriented Mecanum Drive
-            mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            mecanumDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             // Intake Power from triggers
             intakePower = gamepad1.right_trigger - gamepad1.left_trigger;

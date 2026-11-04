@@ -119,7 +119,7 @@ public class Buzzy extends OpMode {
             imu.resetYaw();
         }
 
-        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        mecanumDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
 
         intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
 
