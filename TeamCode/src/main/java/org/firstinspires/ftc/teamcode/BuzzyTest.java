@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * - Adjust TARGET_VELOCITY on the fly via FTC Dashboard or Gamepad Dpad Up/Down.
  */
 @Config
-@TeleOp(name = "Buzzy_Launcher_Test", group = "Test")
+@TeleOp(name = "Shooter_Test", group = "Test")
 public class BuzzyTest extends LinearOpMode {
 
     // Hardware members
@@ -41,7 +41,7 @@ public class BuzzyTest extends LinearOpMode {
     private IMU imu = null;
 
     // Launcher Tuning & Controls (Editable live in FTC Dashboard!)
-    public static int TARGET_VELOCITY = 1250; // Initial target velocity (ticks/sec)
+    public static int TARGET_VELOCITY = 1350; // Initial target velocity (ticks/sec)
     public static int VELOCITY_STEP = 25;      // Ticks/sec adjustment step
     public static double VELOCITY_TOLERANCE_PCT = 0.03;
 

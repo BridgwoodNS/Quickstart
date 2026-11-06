@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Test_Buzzy", group = "Test")
+@TeleOp(name = "Chicken", group = "Test")
 //@Disabled
 public class Buzzy extends OpMode {
 
@@ -40,8 +40,8 @@ public class Buzzy extends OpMode {
     // Velocity Conversion Formulas (for 28 ticks/rev motor):
     // Target Velocity (ticks/sec) = (RPM * TicksPerRev) / 60  ==>  RPM * (28 / 60) == RPM * 0.4667
     // RPM = (Target Velocity * 60) / TicksPerRev              ==>  Velocity * (60 / 28) == Velocity * 2.1429
-    public final int LAUNCHER_TARGET_VELOCITY = 1250; // 2678 RPM
-    public final int LAUNCHER_MIN_VELOCITY = 1200; // 2571 RPM
+    public final int LAUNCHER_TARGET_VELOCITY = 1340; // 2678 RPM
+    public final int LAUNCHER_MIN_VELOCITY = 1305; // 2571 RPM
     public static final double VELOCITY_TOLERANCE_PCT = 0.03;
 
     double leftFrontPower;
