@@ -83,6 +83,7 @@ public class BuzzyTest extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
+        imu.resetYaw();
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -203,28 +204,21 @@ public class BuzzyTest extends LinearOpMode {
     private void mecanumDrive(double forward, double strafe, double rotate) {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
+        // Rotate drive vector counter to robot's heading to make control Field-Oriented
         double rotX = strafe * Math.cos(-botHeading) - forward * Math.sin(-botHeading);
         double rotY = strafe * Math.sin(-botHeading) + forward * Math.cos(-botHeading);
 
-        leftFrontPower  = rotY + rotX + rotate;
-        rightFrontPower = rotY - rotX - rotate;
-        leftBackPower   = rotY - rotX + rotate;
-        rightBackPower  = rotY + rotX - rotate;
+        // Denominator normalizes motor powers to maximum of 1.0
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotate), 1.0);
 
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
+        leftFrontPower  = (rotY + rotX + rotate) / denominator;
+        leftBackPower   = (rotY - rotX + rotate) / denominator;
+        rightFrontPower = (rotY - rotX - rotate) / denominator;
+        rightBackPower  = (rotY + rotX - rotate) / denominator;
 
         leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
+        rightFrontDrive.setPower(rightFrontPower);
         rightBackDrive.setPower(rightBackPower);
     }
 }
