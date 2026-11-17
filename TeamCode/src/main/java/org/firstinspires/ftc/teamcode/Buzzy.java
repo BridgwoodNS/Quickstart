@@ -26,6 +26,7 @@ public class Buzzy extends OpMode {
     private DcMotor rightBackDrive = null;
     private DcMotorEx launcher = null;
     private DcMotor intake = null;
+    private DcMotor intakeMotor = null;
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
@@ -59,6 +60,7 @@ public class Buzzy extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "bl");
         rightBackDrive = hardwareMap.get(DcMotor.class, "br");
         intake = hardwareMap.get(DcMotor.class, "intake");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
         leftIntakeServo = hardwareMap.get(CRServo.class, "leftIntakeServo");
@@ -87,6 +89,7 @@ public class Buzzy extends OpMode {
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
         intake.setZeroPowerBehavior(BRAKE);
+        intakeMotor.setZeroPowerBehavior(BRAKE);
 
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
@@ -127,6 +130,7 @@ public class Buzzy extends OpMode {
         launch();
 
         intake.setPower(intakePower);
+        intakeMotor.setPower(intakePower);
         leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
 
